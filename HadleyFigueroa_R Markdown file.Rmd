@@ -1,0 +1,88 @@
+---
+title: "HadleyFigueroa_R Markdown file"
+author: "Hadley Figueroa"
+date: "2024-06-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data description
+*	Variable 1: Rank -	Professor’s rank of either assistant professor, associate professor, or professor,
+*	Variable 2: Discipline	-	Type of department the professor works in, either applied or theoretical,
+*	Variable 3: Years Since PhD	-	Number of years since the professor has obtained their PhD,
+*	Variable 4: Years Service	-	Number of years the professor has served the department and/or university,
+*	Variable 5: Sex	-	Professor’s sex of either male or female,
+*	Variable 6: Salary -	Professor’s nine-month salary (USD)
+
+
+
+
+# Data wrangling
+* Step 1. Load the library
+* Step 2. Set the working directory
+* Step 3. Read csv file into R using the function read_csv(). / loading dataset
+* Step 4. Use select(), filter(), group_by(), count() in this part and combine them with pipe operator
+* Step 5. Using spread() to transfer the "sex" column to many more columns based on the values in sex.
+* Step 6. Reshape the table from wide to long: using gather() to combine multiple "sex" related columns to one column sex
+
+```{r, results=FALSE, message=FALSE}
+
+# 1. Load the library
+library(tidyverse)
+
+
+# 2. Set the working directory
+getwd()
+
+# 3. Read csv file into R using the function read_csv(). / loading dataset
+
+Salaries <- read_csv("Salaries.csv")
+
+
+# 4. Use select(), filter(), group_by(), count() in this part and combine them with pipe operator
+
+## + Assign the output to a new object named Salaries_new
+Salaries_new <- Salaries %>%
+###   - Select some columns
+  select(rank, discipline, sex, salary) %>%
+###   - Filter the data where salary is not missing value.
+  filter(!is.na(salary)) %>%
+###   - Group the data based on the columns of rank, discipline, sex 
+  group_by(rank, discipline, sex) %>%
+###   - Get the tally count of the observation
+  tally()
+  
+
+
+
+# 5. using spread() to transfer the "sex" column to many more columns based on the values in sex.
+
+# Use spread(): spread(data, key, value, fill = NA, convert = FALSE, drop = TRUE, sep = NULL)
+# + Please use the data frame "Salaries_new" for the spread() operation
+# + Please split the column sex in the data frame "Salaries_new" to many more columns based on the values in sex
+# + Have the values of n(tally count) for the new columns.
+# + Fill the missing value with "FALSE" by setting "fill=FALSE"
+# + Assign the output to an object "wide"
+# + Use pipe operator in this case
+
+wide <- Salaries_new %>%
+  spread(key = sex, value= n, fill = FALSE)
+
+
+# 6. Reshape the table from wide to long: using gather() to combine multiple "sex" related columns to one column sex
+
+# Use gather(): gather(data, key, value, ..., na.rm = FALSE, convert = FALSE, factor_key = FALSE)
+# + Please reshape the data frame "wide" obtained from spread() into the long table 
+# + In the spread() step, you will get two columns about sex "Female" and "Male"
+# + Please make the two sex columns into one column and name the column as "sex"
+# + Please have the values in the two sex columns for a new column "n" (tally count)
+# + Remove the NA by setting "na.rm=TRUE"
+# + Use pipe operator in this case
+
+long <- wide %>%
+  gather(key = sex, value = n, Female:Male, na.rm = TRUE)
+
+```
