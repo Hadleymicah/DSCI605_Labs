@@ -1,0 +1,52 @@
+
+---
+title: "HadleyFigueroa_6.3_GroupHistogram.RMD"
+author: "Hadley Figueroa"
+date: "6/25/2024"
+output: html_document
+---
+
+
+
+```{r, echo=TRUE, warning=FALSE, results=FALSE, message=FALSE}
+
+##Install and Load Required Packages.
+library(tidyverse)
+if(!require(colorspace)) {install.packages('colorspace')}; require(colorspace)
+
+##Load and Inspect the Dataset.
+df <- read.csv("Sampledata2.csv")
+view(df)
+
+##Break the variable “CrimeRate” into three groups based on the range and create a new variable “RangeGroup”
+RangeGroup <- df %>%
+  select(CrimeRate) %>%
+  mutate(type = case_when(CrimeRate < 250 ~ "CrimeRate < 250",
+    CrimeRate >= 250 & CrimeRate <= 500 ~ "250 <= CrimeRate <= 500",
+    CrimeRate > 500 ~ "CrimeRate > 500"))
+
+##Create two color vectors
+n <- length(unique(df$Year))
+col1=colorspace::diverge_hcl(n)
+col2=c("green","blue","red")
+col
+
+##Plot a histogram of the variable “CrimeRate” and fill with the variable “Year”. Please use the first color vector col1 for this graph.
+df %>%
+  ggplot(aes(x=CrimeRate, color=as.factor(Year), fill=as.factor(Year))) +
+  geom_histogram(position="dodge", alpha=0.5, bins=10) +
+  scale_color_manual(values=col1) +
+  scale_fill_manual(values=col1) +
+  labs(fill="Year", color="Year", title="Crimerate Histogram Plots", x="CrimeRate", y="Count") +
+  theme_classic()
+
+##Plot a histogram of the variable “CrimeRate” and fill with the variable “RangeGroup”, which you created in Step3. Please use second color vector col2 for this graph.
+RangeGroup %>%
+  ggplot(aes(x = CrimeRate, color = as.factor(type), fill = as.factor(type))) +
+  geom_histogram(position="dodge", alpha=0.5, bins=10) +
+  scale_color_manual(values=col2) +
+  scale_fill_manual(values=col2) +
+  labs(fill="Range Group", color="Range Group", title="Crimerate Histogram Plots", x="CrimeRate", y="Count") +
+  theme_classic()
+  
+```
