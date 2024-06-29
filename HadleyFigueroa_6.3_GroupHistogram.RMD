@@ -1,6 +1,6 @@
 
 ---
-title: "HadleyFigueroa_6.3_GroupHistogram.RMD"
+title: "HadleyFigueroa_6.3_GroupHistogram"
 author: "Hadley Figueroa"
 date: "6/25/2024"
 output: html_document

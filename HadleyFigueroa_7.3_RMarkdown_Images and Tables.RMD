@@ -1,0 +1,62 @@
+---
+title: "HadleyFigueroa_7.3_RMarkdown_Images and Tables.RMD"
+author: "Hadley Figueroa"
+date: "2024-06-29"
+output: pdf_document
+---
+
+```{r table1, fig.width=7, fig.height=6, fig.res=200, fig.cap="\\label{tab:table1}A Table of the Crime Rate in the US"}
+
+
+library(tidyverse)
+if(!require(colorspace)) {install.packages('colorspace')}; require(colorspace)
+
+library(readxl)
+df <- read_excel("Sampledata2.xlsx")
+
+view(df)
+
+##Create a table
+knitr::kable(head(df,10), caption = "\\label{tab:table1}The first 10 rows of the `Crime Rate` data")
+```
+
+```{r table2, fig.width=7, fig.height=6, fig.res=200, fig.cap="\\label{tab:table2}A Table of the Mean Crime Rate in the US by Year"}
+##Create table with statistical values per year
+grp_df <- df %>%
+  group_by(Year) %>%
+  summarize(
+  mean_CrimeRate = mean(CrimeRate, na.rm = TRUE),
+  max_CrimeRate = max(CrimeRate, na.rm = TRUE),
+  min_CrimeRate = min(CrimeRate, na.rm = TRUE))
+
+knitr::kable(head(grp_df), caption = "\\label{tab:table2}The mean/min/max of the `Crime Rate` data by Year")
+```
+
+```{r plot1, fig.width=7, fig.height=6, fig.res=200, fig.cap="\\label{fig:plot1}A Histogram of the Crime Rate in the US by Year"}
+##Plot a grouped histogram for the variable “CrimeRate” based on Year, with the original data
+n <- length(unique(df$Year))
+col1=colorspace::diverge_hcl(n)
+
+df %>% 
+  ggplot(aes(x=CrimeRate, color=as.factor(Year), fill=as.factor(Year))) +
+  geom_histogram(position="dodge", alpha=0.5, bins=10) +
+  scale_color_manual(values=col1) +
+  scale_fill_manual(values=col1) +
+  labs(fill="Year", color="Year", title="Crime Rate Histogram Plots", x="CrimeRate", y="Count") +
+  theme_classic()
+```
+
+```{r plot2, fig.width=7, fig.height=6, fig.res=200, fig.cap="\\label{fig:plot2}A Point-line Plot of the Mean Crime Rate in the US by Year"}
+ggplot(grp_df, aes(x = Year, y = mean_CrimeRate)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Mean Crime Rate by Year",
+       x = "Year",
+       y = "Mean Crime Rate") +
+  theme_classic()
+```
+
+In Table \ref{tab:table1} we see the first 10 rows of the Crime Rate data”.
+In Table \ref{tab:table2} we see the basic statistical values of crime rates over USA for each year.
+In Figure \ref{fig:plot1} we can see the grouped histogram for each year.
+In Figure \ref{fig:plot2} we can see the average crime rate changes along with years.

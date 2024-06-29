@@ -1,0 +1,36 @@
+---
+title: "HadleyFigueroa_8.2_Grouped_boxplots.RMD"
+author: "Hadley Figueroa"
+date: "2024-06-29"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+if (!require(tidyverse)) {install.packages('tidyverse')}
+library(tidyverse)
+if (!require(readxl)) {install.packages('readxl')}
+library(readxl)
+
+
+# Set the working directory to where your data file is located
+# setwd("your/working/directory")
+
+# Load the dataset
+land <- read_xlsx('Crop_Range_GOES0901_CountJday.xlsx')
+
+# Inspect the dataset
+head(land)
+summary(land)
+
+
+land %>% 
+  filter(jday %in% seq(235, 243)) %>%
+  ggplot(aes(x = as.factor(jday), y = FDCount, fill = as.factor(jday))) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 8, outlier.size = 2) +
+  xlab("Julian Day") +
+  labs(fill = "Julian Day") +
+  ggtitle("Boxplot of FDCount by Julian Day")
+```
